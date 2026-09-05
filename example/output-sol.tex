@@ -1,0 +1,75 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+
+\usepackage[table]{xcolor}
+\usepackage{tabularray}  
+\usepackage{float}
+\usepackage{multicol}
+
+\title{Crossword Puzzle}
+\author{Author}
+\date{\today}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\def\cellsize{1.5cm}
+\def\solcellsize{0.9cm}
+\begin{center}
+{
+\huge{Solution - Blank 1}
+}
+
+\begin{table}[H]
+\centering
+\rotatebox[origin=c]{180}{
+\begin{tblr}{
+  colspec = {X[c,m,\solcellsize]X[c,m,\solcellsize]X[c,m,\solcellsize]X[c,m,\solcellsize]X[c,m,\solcellsize]},
+  stretch = 0,
+  rowsep = 2pt,
+  row{1-5} = {\solcellsize - 4pt, font=\Large\bfseries},
+  colsep = 0.1pt,
+  hlines = {black, 1.2pt},
+  vlines = {black, 1.2pt},
+  }
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+    \end{tblr}
+    }
+    \label{crossword}
+\end{table}
+
+\end{center}
+\begin{center}
+{
+\huge{Solution - Blank 2}
+}
+
+\begin{table}[H]
+\centering
+\rotatebox[origin=c]{180}{
+\begin{tblr}{
+  colspec = {X[c,m,\solcellsize]X[c,m,\solcellsize]X[c,m,\solcellsize]X[c,m,\solcellsize]X[c,m,\solcellsize]},
+  stretch = 0,
+  rowsep = 2pt,
+  row{1-5} = {\solcellsize - 4pt, font=\Large\bfseries},
+  colsep = 0.1pt,
+  hlines = {black, 1.2pt},
+  vlines = {black, 1.2pt},
+  }
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+\textbf{ } & \textbf{ } & \textbf{ } & \textbf{ } & \textbf{ }\\ 
+    \end{tblr}
+    }
+    \label{crossword}
+\end{table}
+
+\end{center}
+
+\end{document}

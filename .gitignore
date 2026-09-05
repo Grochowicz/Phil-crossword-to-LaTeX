@@ -1,0 +1,6 @@
+# vim undofile
+.*.un~
+# TeXworks stuff
+*.synctex.gz
+*.aux
+*.log
