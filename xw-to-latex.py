@@ -27,11 +27,11 @@ def to_latex(data):
                 clue_cnt += 1
                 written_numbers += "\\textsuperscript{"+str(clue_cnt)+"}"
                 if 'circles' in data and data['circles'][M*i+j] == 1:
-                    written_numbers += "\\put(16.5,-11){\\circle{\\cellsize}}"
+                    written_numbers += "\\put(18.5,-9){\\circle{\\cellsize}}"
             else:
                 written_numbers += "\\textsuperscript{ }"
                 if 'circles' in data and data['circles'][M*i+j] == 1:
-                    written_numbers += "\\put(17,-11){\\circle{\\cellsize}}"
+                    written_numbers += "\\put(20.5,-9.5){\\circle{\\cellsize}}"
             written_numbers += " & " if j < M-1 else "\\\\ \n"
 
 #    Clues
@@ -64,10 +64,7 @@ def to_latex(data):
         "\\Large{by "+data['author']+"}\n"
         "}\n"
         "\n"
-        "\\vspace{1cm}\n"
-        "\n"
-        "\\def\\cellsize{1.5cm}\n"
-        "\\def\\solcellsize{0.9cm}\n"
+        "\\vspace{0.3cm}\n"
         "\n"
         "\\begin{table}[H]\n"
         "\\centering\n"
@@ -75,7 +72,7 @@ def to_latex(data):
         "  colspec = {X[l,h,\\cellsize]X[l,h,\\cellsize]X[l,h,\\cellsize]X[l,h,\\cellsize]X[l,h,\\cellsize]},\n"
         "  stretch = 0,\n"
         "  rowsep = 2pt,\n"
-        "  row{1-5} = {\\cellsize - 4pt, font=\\large\\bfseries},\n"
+        "  row{1-5} = {\\cellsize - 4pt, font=\\LARGE\\bfseries},\n"
         "  colsep = 0.1pt,\n"
         "  hlines = {black, 1.2pt},\n"
         "  vlines = {black, 1.2pt},\n"
@@ -86,7 +83,7 @@ def to_latex(data):
         "    \\label{crossword}\n"
         "\\end{table}\n"
         "\n"
-        "\\vspace{0.5cm}\n"
+        "\\vspace{0.3cm}\n"
         "\n"
         "\\begin{multicols}{2}\n"
         "    {\\Large Across}\n"
@@ -104,7 +101,7 @@ def to_latex(data):
         "    \\end{enumerate}\n"
         "\\end{multicols}\n"
         "\n"
-        "\\vspace{0.6cm}\n"
+        "\\vspace{0.3cm}\n"
         "Created \\today\n"
         "\\end{center}\n"),(
         "\\begin{center}\n"
@@ -143,11 +140,11 @@ def main():
     cat_cw = (
         "\\documentclass[a4paper]{article}\n"
         "\\usepackage{graphicx}\n"
-        "\n"
         "\\usepackage[table]{xcolor}\n"
         "\\usepackage{tabularray}  \n"
         "\\usepackage{float}\n"
         "\\usepackage{multicol}\n"
+        "\\usepackage{pict2e}\n"
         "\n"
         "\\title{Crossword Puzzle}\n"
         "\\author{Author}\n"
@@ -156,7 +153,7 @@ def main():
         "\\begin{document}\n"
         "\\pagenumbering{gobble}\n"
         "\n"
-        "\\def\\cellsize{1.5cm}\n"
+        "\\def\\cellsize{1.8cm}\n"
         "\\def\\solcellsize{0.9cm}\n"
     )
     cat_sol = cat_cw
