@@ -1,5 +1,6 @@
 import simplejson as json
 import sys
+import os
 
 N = 5
 M = 5
@@ -58,8 +59,8 @@ def to_latex(data):
         "\\begin{center}\n"
         "\n"
         "{\n"
-        "\\huge{"+data['title']+"}\\\\\n"
-        "\\LARGE{Theme - General}\\\\\n"
+        "\\huge{Title}\\\\\n"
+        "\\LARGE{"+data['title']+"}\\\\\n"
         "\\vspace{0.3cm}\n"
         "\\Large{by "+data['author']+"}\n"
         "}\n"
@@ -83,7 +84,7 @@ def to_latex(data):
         "    \\label{crossword}\n"
         "\\end{table}\n"
         "\n"
-        "\\vspace{0.3cm}\n"
+        "\\vspace{0.2cm}\n"
         "\n"
         "\\begin{multicols}{2}\n"
         "    {\\Large Across}\n"
@@ -175,6 +176,10 @@ def main():
             continue
 
         infile = sys.argv[i]
+        if not os.path.exists(infile):
+            print("Error: file '"+sys.argv[i]+"' does not exist")
+            sys.exit(1)
+
         with open(infile, 'r') as f:
             data = json.load(f)
             for field in ['author','title','size','clues','grid']:
