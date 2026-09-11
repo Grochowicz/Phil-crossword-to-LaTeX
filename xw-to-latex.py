@@ -4,6 +4,30 @@ import os
 
 N = 5
 M = 5
+language = ""
+
+translate = {
+    "en": {
+        "crossword puzzle": "Crossword Puzzle",
+        "title": "Title",
+        "by": "by",
+        "author": "Author",
+        "created": "Created",
+        "solution": "Solution",
+        "across": "Across",
+        "down": "Down",
+    },
+    "pt": {
+        "crossword puzzle": "Palavra Cruzada",
+        "title": "Título",
+        "by": "por",
+        "author": "Autor",
+        "created": "Criado em",
+        "solution": "Solução",
+        "across": "Horizontais",
+        "down": "Verticais",
+    },
+}
 
 def to_latex(data):
 #   Paint black cells
@@ -59,10 +83,10 @@ def to_latex(data):
         "\\begin{center}\n"
         "\n"
         "{\n"
-        "\\huge{Title}\\\\\n"
+        "\\huge{"+translate[language]['title']+"}\\\\\n"
         "\\LARGE{"+data['title']+"}\\\\\n"
         "\\vspace{0.3cm}\n"
-        "\\Large{by "+data['author']+"}\n"
+        "\\Large{"+translate[language]['by']+" "+data['author']+"}\n"
         "}\n"
         "\n"
         "\\vspace{0.3cm}\n"
@@ -87,7 +111,7 @@ def to_latex(data):
         "\\vspace{0.2cm}\n"
         "\n"
         "\\begin{multicols}{2}\n"
-        "    {\\Large Across}\n"
+        "    {\\Large "+translate[language]['across']+"}\n"
         "    \\begin{enumerate}\n"
         "    \\large\n"
         ""+clue_desc['across']+""
@@ -95,7 +119,7 @@ def to_latex(data):
         "    \n"
         "    \\columnbreak\n"
         "    \n"
-        "    {\\Large Down}\n"
+        "    {\\Large "+translate[language]['down']+"}\n"
         "    \\begin{enumerate}\n"
         "    \\large\n"
         ""+clue_desc['down']+""
@@ -103,11 +127,11 @@ def to_latex(data):
         "\\end{multicols}\n"
         "\n"
         "\\vspace{0.3cm}\n"
-        "Created \\today\n"
+        ""+translate[language]['created']+" \\today\n"
         "\\end{center}\n"),(
         "\\begin{center}\n"
         "{\n"
-        "\\huge{Solution - "+data['title']+"}\n"
+        "\\huge{"+translate[language]['solution']+" - "+data['title']+"}\n"
         "}\n"
         "\n"
         "\\begin{table}[H]\n"
@@ -138,6 +162,21 @@ def main():
         print("Usage: xw-to-latex.py [-o outfile] infile...")
         sys.exit(1)
 
+    global language
+    language = "en"
+
+    for arg in sys.argv:
+        if arg[0] != '-':
+            continue
+        if arg == "-p":
+            language = "pt"
+
+    outfile = "a"
+
+    babel = ""
+    if language == "pt":
+        babel = "\\usepackage[portuguese]{babel}\n"
+
     cat_cw = (
         "\\documentclass[a4paper]{article}\n"
         "\\usepackage{graphicx}\n"
@@ -146,9 +185,9 @@ def main():
         "\\usepackage{float}\n"
         "\\usepackage{multicol}\n"
         "\\usepackage{pict2e}\n"
-        "\n"
-        "\\title{Crossword Puzzle}\n"
-        "\\author{Author}\n"
+        ""+babel+""
+        "\\title{"+translate[language]['crossword puzzle']+"}\n"
+        "\\author{"+translate[language]['author']+"}\n"
         "\\date{\\today}\n"
         "\n"
         "\\begin{document}\n"
@@ -159,21 +198,19 @@ def main():
     )
     cat_sol = cat_cw
 
-    outfile = "a"
-
     i = 1
     while i < len(sys.argv):
         if sys.argv[i][0] == '-':
-            if len(sys.argv[i]) == 1:
-                print("Error: '-' without 'o'")
-                sys.exit(1)
-            if sys.argv[i][1] != 'o':
-                print("Error: unknown option '-"+sys.argv[i][1]+"'")
-                sys.exit(1)
-
-            outfile = sys.argv[i+1]
-            i += 2
-            continue
+            if sys.argv[i] == "-o":
+                outfile = sys.argv[i+1]
+                i += 2
+                continue
+            if sys.argv[i] == "-p":
+                language = "pt"
+                i += 1
+                continue
+            print("Error: unknown option '-"+sys.argv[i][1:]+"'")
+            sys.exit(1)
 
         infile = sys.argv[i]
         if not os.path.exists(infile):

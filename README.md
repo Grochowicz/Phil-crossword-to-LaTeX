@@ -10,13 +10,15 @@ This utility may receive many .xw files as command line arguments and will conca
 
 Also note that the output may require somewhat extensive manual adjustment depending on how much text is in your clues. For instance, I manually adjust some of the `\vspace`s and I like to use `multicols` for the solutions.
 
-
-
 ### Usage
 
-Run: `python3 xw-to-latex.py [-o outfile] infile...`
+Run: `python3 xw-to-latex.py [-o outfile] [-p] infile...`
 
+* `-o` will specify output file
 
+* `-p` will set language to Portuguese
+
+  
 
 This program will write two files as output:
 
@@ -27,8 +29,6 @@ This program will write two files as output:
 * `outfile`-sol.tex
 
   * Concatenated crossword puzzle solutions, in the order they were given.
-
-    
 
 ### Example
 
