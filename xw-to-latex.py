@@ -5,6 +5,10 @@ import os
 CELLSIZE="1.8cm"
 SOLCELLSIZE="0.9cm"
 
+MIN_ANSWER_SIZE=3
+
+BLANK_CLUE = "(blank clue)"
+
 translate = {
     "en": {
         "crossword puzzle": "Crossword Puzzle",
@@ -34,38 +38,86 @@ def to_latex(data, language):
 #    "  cell{{2}{5}} = {bg=black},"
     black_cells = ""
     N = data['size']['rows']
-    M = data['size']['rows']
+    M = data['size']['cols']
 
     for i in range(N):
         for j in range(M):
             if data['grid'][M*i+j]=='.':
                 black_cells += "cell{{"+str(i+1)+"}"+"{"+str(j+1)+"}} = {bg=black},"
 
-#   Clue numbers on grid and circles
+#   Helper functions and lists
+    def size_at_least_min(i,j,direction):
+        if direction == 'across':
+            for x in range(MIN_ANSWER_SIZE):
+                if not valid(i,j+x):
+                    return False
+        else:
+            for x in range(3):
+                if not valid(i+x,j):
+                    return False
+        return True
+
+    clues_by_number = {
+            'across':[],
+            'down':[],
+    }
+    for direction in ['across','down']:
+        for entry in data['clues'][direction]:
+            number, _, clue = entry.partition('. ')
+            number = int(number)
+            clues_by_number[direction].append([number,clue])
+
     def valid(i,j):
         return i>=0 and i<N and j>=0 and j<M and data['grid'][M*i+j]!='.'
-    def size_at_least_3_hori(i,j):
-        for x in range(3):
-            if not valid(i,j+x):
-                return False
+    def check_clue(clue_id,direction):
+        for [number,clue] in clues_by_number[direction]:
+            if number == clue_id:
+                return True
+        return False
+    def is_blank(clue_id):
+        for [number,clue] in clues_by_number['across']:
+            if number == clue_id:
+                if clue != BLANK_CLUE:
+                    return False
+        for [number,clue] in clues_by_number['down']:
+            if number == clue_id:
+                if clue != BLANK_CLUE:
+                    return False
         return True
-    def size_at_least_3_vert(i,j):
-        for x in range(3):
-            if not valid(i+x,j):
-                return False
-        return True
-    def is_clue(i,j):
-        return valid(i,j) and ((not valid(i-1,j) and size_at_least_3_vert(i,j)) or (not valid(i,j-1) and size_at_least_3_hori(i,j)))
+    def set_blank(clue_id,direction):
+        for entry in clues_by_number[direction]:
+            [number,clue] = entry
+            if number == clue_id:
+                entry[1] = BLANK_CLUE
+    def is_clue(i,j,clue_id):
+        return valid(i,j) and ((not valid(i-1,j) and check_clue(clue_id,'down')) or (not valid(i,j-1) and check_clue(clue_id,'across')))
+    def is_clue_dir(i,j,clue_id,direction):
+        if direction == 'across':
+            return valid(i,j) and (not valid(i,j-1) and check_clue(clue_id,'across'))
+        else:
+            return valid(i,j) and (not valid(i-1,j) and check_clue(clue_id,'down'))
 
+#   Clue numbers on grid and circles
     written_numbers = ""
     clue_cnt = 0
     for i in range(N):
         for j in range(M):
-            if is_clue(i,j):
+            if is_clue(i,j,clue_cnt+1):
                 clue_cnt += 1
-                written_numbers += "\\textsuperscript{"+str(clue_cnt)+"}"
-                if 'circles' in data and data['circles'][M*i+j] == 1:
-                    written_numbers += "\\put(18.5,-9){\\circle{\\cellsize}}"
+
+#               Filter clues with size less than 3
+                for direction in ['across','down']:
+                    if is_clue_dir(i,j,clue_cnt,direction) and not size_at_least_min(i,j,direction):
+                        set_blank(clue_cnt,direction)
+
+                if is_blank(clue_cnt):
+                    written_numbers += "\\textsuperscript{ }"
+                    if 'circles' in data and data['circles'][M*i+j] == 1:
+                        written_numbers += "\\put(20.5,-9.5){\\circle{\\cellsize}}"
+                else:
+                    written_numbers += "\\textsuperscript{"+str(clue_cnt)+"}"
+                    if 'circles' in data and data['circles'][M*i+j] == 1:
+                        written_numbers += "\\put(18.5,-9){\\circle{\\cellsize}}"
             else:
                 written_numbers += "\\textsuperscript{ }"
                 if 'circles' in data and data['circles'][M*i+j] == 1:
@@ -76,25 +128,14 @@ def to_latex(data, language):
 #    "        \\item[1] Clue 1\n"
 #    "        \\item[5] Clue 5\n"
 #    "        \\item[6] Clue 6\n"
-    clues_by_number = {
-            'across':[],
-            'down':[],
-    }
-    for direction in ['across','down']:
-        for entry in data['clues'][direction]:
-            number, _, clue = entry.partition('. ')
-            number = int(number)
-#            if len(clue) == 0 or clue == "(blank clue)":
-#                continue
-            clues_by_number[direction].append((number,clue))
-
     clue_desc = {
             'across':"",
             'down':"",
     }
     for direction in ['across','down']:
-        for (number,clue) in sorted(clues_by_number[direction]):
-            clue_desc[direction] += "\\item["+str(number)+"] "+clue.replace('_','\\_').replace('&nbsp;',' ')+"\n"
+        for [number,clue] in sorted(clues_by_number[direction]):
+            if clue != BLANK_CLUE:
+                clue_desc[direction] += "\\item["+str(number)+"] "+clue.replace('_','\\_').replace('&nbsp;',' ')+"\n"
 
 #    Solution
 #    "         \\textbf{S}  & \\textbf{O} & \\textbf{L} & \\textbf{ } & \\textbf{ } \\\\\n"
@@ -183,7 +224,7 @@ def to_latex(data, language):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: xw-to-latex.py [-o outfile] infile...")
+        print("Usage: "+sys.argv[0]+" [-o outfile] [-p] infile...")
         sys.exit(1)
 
     language = "en"
